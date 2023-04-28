@@ -199,6 +199,10 @@ def find_youtube_channel(query):
     return None
 
 
+def open_control_panel():
+    os.system("control")
+
+
 def set_reminder():
     speak("What do you want me to remind you about?")
     reminder = takecommand()
@@ -324,3 +328,8 @@ if __name__ == "__main__":
             speak("reminded  successfully")
             break
 
+
+        elif "open settings" in query:
+            open_control_panel()
+            speak("Opening settings.")
+            break
