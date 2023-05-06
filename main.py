@@ -1,5 +1,6 @@
+#Friday Voice Assistant 
 import sys
-import pyjokes #this is for jokes
+import pyjokes 
 import pyttsx3
 import time
 import speech_recognition as sr
