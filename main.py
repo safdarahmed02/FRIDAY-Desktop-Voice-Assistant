@@ -1,5 +1,5 @@
 import sys
-import pyjokes
+import pyjokes #this is for jokes
 import pyttsx3
 import time
 import speech_recognition as sr
