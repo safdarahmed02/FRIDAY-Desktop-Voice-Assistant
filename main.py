@@ -1,3 +1,4 @@
+import customtkinter
 import sys
 import pyjokes
 import pyttsx3
@@ -16,6 +17,14 @@ import webbrowser
 import wikipedia
 import smtplib
 
+# appearance setting gui
+
+customtkinter.set_appearance_mode("dark")  # Modes: "System" (standard), "Dark", "Light"
+customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
+
+app = customtkinter.CTk()
+app.geometry("400x600")
+app.title("FRIDAY")
 
 engine = pyttsx3.init('sapi5')
 voices = engine.getProperty('voices')
@@ -31,23 +40,36 @@ def speak(audio):
 def takecommand():
     r = sr.Recognizer()
     with sr.Microphone() as source:
-        print("listening...")
+        text_1.insert("end", "Listening...\n")
+        app.update_idletasks()
+
         r.pause_threshold = 1
         r.adjust_for_ambient_noise(source)  # adjust for ambient noise
         while True:
             audio = r.listen(source, timeout=5, phrase_time_limit=8)
 
             try:
-                print("Recognizing...")
+                text_1.insert("end", "Recognizing...\n")
+                app.update_idletasks()
+
                 query = r.recognize_google(audio, language='en-in')
-                print(f"user said: {query}")
+                text_1.insert("end", f"user said: {query}\n")
+                app.update_idletasks()
+                text_1.see("end")
+
                 return query
             except sr.UnknownValueError:
+                text_1.insert("end", "Sorry, I didn't catch that. Could you please repeat?\n")
+                app.update_idletasks()
                 speak("Sorry, I didn't catch that. Could you please repeat?")
-                print("listening...")
+                text_1.insert("end", "Listening...\n")
+                app.update_idletasks()
             except sr.RequestError as e:
+                text_1.insert("end", "Sorry, I'm having trouble. Please try again later.\n")
+                app.update_idletasks()
                 speak("Sorry, I'm having trouble. Please try again later.")
-                print("listening...")
+                text_1.insert("end", "Listening...\n")
+                app.update_idletasks()
                 break
     return "none"
 
@@ -72,7 +94,7 @@ def news(source='techcrunch', count=5):
     main_page = requests.get(main_url).json()
     articles = main_page["articles"][:count]
     for i, article in enumerate(articles):
-        speak(f"Headline {i+1}: {article['title']}")
+        speak(f"Headline {i + 1}: {article['title']}")
 
 
 def scrapeQuotes():
@@ -123,7 +145,6 @@ def tell_joke():
     speak(joke)
 
 
-
 def play_youtube():
     speak("What do you want me to search on YouTube?")
     search_query = takecommand()
@@ -165,8 +186,6 @@ def send_email(email_address):
     speak("Email sent successfully!")
 
 
-
-
 def get_weather(city):
     api_key = "b7a69dcee9468dce40ca14e1cd980aca"
     url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}&units=metric"
@@ -183,7 +202,6 @@ def get_weather(city):
         return output
     else:
         return f"Sorry, {city} not found. Please try again with a valid city name."
-
 
 
 def find_youtube_channel(query):
@@ -214,7 +232,6 @@ def set_reminder():
     speak(f"Reminder: {reminder}")
 
 
-
 def power(mode):
     if mode == "restart":
         os.system("shutdown /r /t 1")
@@ -226,110 +243,136 @@ def power(mode):
         speak("Invalid power mode. Please choose from 'restart', 'sleep', or 'shutdown'.")
 
 
-if __name__ == "__main__":
-    wish()
-    while True:
-        query = takecommand().lower()
+def button_callback():
+    if __name__ == "__main__":
+        wish()
+        while True:
+            query = takecommand().lower()
 
-        if "open notepad" in query:
-            npath = "C://Windows//system32//notepad.exe"
-            os.startfile(npath)
-
-
-        elif "no thanks" in query:
-            speak("thanks for using me sir, have a good day.")
-            sys.exit()
+            if "open notepad" in query:
+                npath = "C://Windows//system32//notepad.exe"
+                os.startfile(npath)
 
 
-        elif "play music" in query:
-            music_dir = "C://Users//Username//Music"
-            songs = os.listdir(music_dir)
-            os.startfile(os.path.join(music_dir, songs[0]))
+            elif "no thanks" or "thanks" or "thank" in query:
+                speak("thanks for using me sir, have a good day.")
+                sys.exit()
 
 
-        elif "what's the time" in query or "tell me the time" in query:
-            strTime = datetime.datetime.now().strftime("%H:%M:%S")
-            speak(f"Sir, the time is {strTime}")
+            elif "play music" in query:
+                music_dir = "C://Users//Username//Music"
+                songs = os.listdir(music_dir)
+                os.startfile(os.path.join(music_dir, songs[0]))
 
 
-        elif "news" in query:
-            news()
-            break
+            elif "what's the time" in query or "tell me the time" in query:
+                strTime = datetime.datetime.now().strftime("%H:%M:%S")
+                speak(f"Sir, the time is {strTime}")
 
 
-        elif "quotes" in query:
-            scrapeQuotes()
-            break
+            elif "news" in query:
+                news()
+                break
 
 
-        elif "screenshot" in query:
-            take_screenshot()
-            speak("Screenshot taken!")
-            break
+            elif "quotes" in query:
+                scrapeQuotes()
+                break
 
 
-        elif "open notepad" in query:
-            open_notepad()
-            speak("Opening Notepad!")
-            write_notepad()
-            break
+            elif "screenshot" in query:
+                take_screenshot()
+                speak("Screenshot taken!")
+                break
 
 
-        elif "tell me a joke" in query:
-            tell_joke()
-            break
-
-        elif "play youtube" in query:
-            play_youtube()
-            break
+            elif "open notepad" in query:
+                open_notepad()
+                speak("Opening Notepad!")
+                write_notepad()
+                break
 
 
-        elif "google" in query:
-            speak("What do you want me to search on Google?")
-            search_query = takecommand()
-            google_search(search_query)
-            break
+            elif "tell me a joke" in query:
+                tell_joke()
+                break
+
+            elif "play youtube" in query:
+                play_youtube()
+                break
 
 
-        elif "wikipedia" in query:
-            speak("What do you want to know from wikipedia?")
-            query = takecommand()
-            search_wikipedia(query)
-            break
+            elif "google" in query:
+                speak("What do you want me to search on Google?")
+                search_query = takecommand()
+                google_search(search_query)
+                break
 
 
-        elif "power" in query:
-            speak("Which mode do you want to activate? 'restart', 'sleep', or 'shutdown'?")
-            mode = takecommand().lower()
-            power(mode)
-            speak(f"{mode} mode activated!")
-            break
+            elif "wikipedia" in query:
+                speak("What do you want to know from wikipedia?")
+                query = takecommand()
+                search_wikipedia(query)
+                break
 
 
-        elif "send email" in query:
-            #speak("Whom should I send this email to?")
-            #recipient = takecommand()
-            speak("What content do you want?")
-            message = takecommand()
-            send_email(message)
-            speak("Email sent successfully!")
-            break
-
-        elif "weather" in query:
-            speak("Sure, which city's weather do you want to know?")
-            city = takecommand().lower()
-            weather_info = get_weather(city)
-            speak(weather_info)
-            break
+            elif "power" in query:
+                speak("Which mode do you want to activate? 'restart', 'sleep', or 'shutdown'?")
+                mode = takecommand().lower()
+                power(mode)
+                speak(f"{mode} mode activated!")
+                break
 
 
-        elif "set reminder" in query:
-            set_reminder()
-            speak("reminded  successfully")
-            break
+            elif "send email" in query:
+                # speak("Whom should I send this email to?")
+                # recipient = takecommand()
+                speak("What content do you want?")
+                message = takecommand()
+                send_email(message)
+                speak("Email sent successfully!")
+                break
+
+            elif "weather" in query:
+                speak("Sure, which city's weather do you want to know?")
+                city = takecommand().lower()
+                weather_info = get_weather(city)
+                speak(weather_info)
+                break
 
 
-        elif "open settings" in query:
-            open_control_panel()
-            speak("Opening settings.")
-            break
+            elif "set reminder" in query:
+                set_reminder()
+                speak("reminded  successfully")
+                break
+
+
+            elif "open settings" in query:
+                open_control_panel()
+                speak("Opening settings.")
+                break
+
+
+# GUI source starts here:
+
+frame_1 = customtkinter.CTkFrame(master=app)
+frame_1.pack(pady=20, padx=60, fill="both", expand=True)
+
+label_1 = customtkinter.CTkLabel(master=frame_1, justify=customtkinter.LEFT, text="FRIDAY Desktop Voice Assistand")
+label_1.pack(pady=10, padx=10)
+
+progressbar_1 = customtkinter.CTkProgressBar(master=frame_1)
+progressbar_1.pack(pady=10, padx=10)
+
+button_1 = customtkinter.CTkButton(master=frame_1, command=button_callback, text= "RUN")
+button_1.pack(pady=10, padx=10)
+
+entry_1 = customtkinter.CTkEntry(master=frame_1, placeholder_text="Enter Command:")
+entry_1.pack(pady=10, padx=10)
+
+text_1 = customtkinter.CTkTextbox(master=frame_1, width=200, height=70)
+text_1.pack(pady=10, padx=10)
+text_1.insert("0.0", "Status\n\n\n\n")
+
+app.mainloop()
+
