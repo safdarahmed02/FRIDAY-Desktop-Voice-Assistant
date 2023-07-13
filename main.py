@@ -1,21 +1,28 @@
-import customtkinter
-import sys
-import pyjokes
-import pyttsx3
-import time
-import speech_recognition as sr
-import datetime
-import requests
-import googlesearch
-import json
-from bs4 import BeautifulSoup
-import os
-import pyautogui
-from PIL import Image
-import pywhatkit
-import webbrowser
-import wikipedia
-import smtplib
+try:
+    import customtkinter
+    import sys
+    import pyjokes
+    import pyttsx3
+    import time
+    import speech_recognition as sr
+    import datetime
+    import requests
+    import googlesearch
+    import json
+    from bs4 import BeautifulSoup
+    import os
+    import pyautogui
+    from PIL import Image
+    import pywhatkit
+    import webbrowser
+    import wikipedia
+    import smtplib
+except ModuleNotFoundError:
+    print("Some modules might be missing.")
+except NameError:
+    print("Name might be typed incorrect")
+except Exception as e:
+    print(e)
 
 # appearance setting gui
 
@@ -26,9 +33,28 @@ app = customtkinter.CTk()
 app.geometry("400x600")
 app.title("FRIDAY")
 
-engine = pyttsx3.init('sapi5')
-voices = engine.getProperty('voices')
-engine.setProperty('voice', voices[0].id)
+
+voices = []
+engine = None
+
+try:
+    engine = pyttsx3.init('sapi5')
+except ImportError:
+    print("Import Issue")
+    engine = None
+except RuntimeError:
+    print("Runtime Issue")
+    engine = None
+except Exception as e:
+    print(e)
+    engine = None
+
+if engine is None:
+    print("Sorry, something went wrong 'engine = None")
+
+else:
+    voices = engine.getProperty('voices')
+    engine.setProperty('voice', voices[0].id)
 
 
 def speak(audio):
@@ -71,6 +97,10 @@ def takecommand():
                 text_1.insert("end", "Listening...\n")
                 app.update_idletasks()
                 break
+
+            except Exception as e:
+                print(e)
+                sys.exit()
     return "none"
 
 
@@ -364,7 +394,7 @@ label_1.pack(pady=10, padx=10)
 progressbar_1 = customtkinter.CTkProgressBar(master=frame_1)
 progressbar_1.pack(pady=10, padx=10)
 
-button_1 = customtkinter.CTkButton(master=frame_1, command=button_callback, text= "RUN")
+button_1 = customtkinter.CTkButton(master=frame_1, command=button_callback, text="RUN")
 button_1.pack(pady=10, padx=10)
 
 entry_1 = customtkinter.CTkEntry(master=frame_1, placeholder_text="Enter Command:")
@@ -375,4 +405,3 @@ text_1.pack(pady=10, padx=10)
 text_1.insert("0.0", "Status\n\n\n\n")
 
 app.mainloop()
-
