@@ -282,22 +282,26 @@ def button_callback():
             if "open notepad" in query:
                 npath = "C://Windows//system32//notepad.exe"
                 os.startfile(npath)
+                break
 
 
             elif "no thanks" or "thanks" or "thank" in query:
                 speak("thanks for using me sir, have a good day.")
                 sys.exit()
+                break
 
 
             elif "play music" in query:
                 music_dir = "C://Users//Username//Music"
                 songs = os.listdir(music_dir)
                 os.startfile(os.path.join(music_dir, songs[0]))
+                break
 
 
             elif "what's the time" in query or "tell me the time" in query:
                 strTime = datetime.datetime.now().strftime("%H:%M:%S")
                 speak(f"Sir, the time is {strTime}")
+                break
 
 
             elif "news" in query:
